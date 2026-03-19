@@ -19,12 +19,22 @@ export const AuthProvider = ({ children }) => {
 }, []);
 
   const fetchMe = async () => {
-    try {
-      const { data } = await api.get('/api/auth/me');
-      setUser(data.user);
-    } catch { localStorage.removeItem('dayzen_token'); }
-    finally { setLoading(false); }
-  };
+  try {
+    const { data } = await api.get('/api/auth/me');
+    setUser(data.user);
+  } catch (err) {
+    // ✅ If offline → DO NOT logout
+    if (!navigator.onLine) {
+      console.log('Offline - keeping user session');
+    } else {
+      // ❌ Only logout if real auth error
+      localStorage.removeItem('dayzen_token');
+      setUser(null);
+    }
+  } finally {
+    setLoading(false);
+  }
+};
 
   const register = async (name, email, password) => {
     const { data } = await api.post('/api/auth/register', { name, email, password });
