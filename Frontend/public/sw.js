@@ -34,41 +34,44 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
 
+  // 🔥 Skip non-GET requests
+  if (e.request.method !== 'GET') return;
+
   // 🔥 API → Network-first
   if (url.pathname.startsWith('/api')) {
     e.respondWith(
-      fetch(e.request)
-        .then((res) => res)
-        .catch(() =>
-          new Response(JSON.stringify({ error: 'offline' }), {
-            headers: { 'Content-Type': 'application/json' }
-          })
-        )
+      fetch(e.request).catch(() =>
+        new Response(JSON.stringify({ error: 'offline' }), {
+          headers: { 'Content-Type': 'application/json' }
+        })
+      )
     );
     return;
   }
 
-  // 🔥 Static → Cache-first
+  // 🔥 Static → Cache-first (SAFE)
   e.respondWith(
     caches.match(e.request).then((cached) => {
       if (cached) return cached;
 
       return fetch(e.request)
         .then((res) => {
-          // ❌ Don't cache bad responses
-          if (!res || res.status !== 200 || res.type !== 'basic') {
-            return res;
-          }
+          // ❌ IMPORTANT FIX
+          if (!res || res.status !== 200) return res;
+
+          // ❌ Skip cross-origin / opaque responses
+          if (res.type !== 'basic') return res;
 
           const clone = res.clone();
+
           caches.open(CACHE).then((cache) => {
-            cache.put(e.request, clone);
+            cache.put(e.request, clone).catch(() => {});
           });
 
           return res;
         })
         .catch(() => {
-          // 🔥 Offline fallback
+          // fallback for navigation
           if (e.request.mode === 'navigate') {
             return caches.match('/index.html');
           }
