@@ -58,10 +58,10 @@ export default function MemoryForm({ memory, onClose, onSaved }) {
 };
     try {
       if (memory?._id) {
-        await api.patch(`/memories/${memory._id}`, payload);
+        await api.patch(`/api/memories/${memory._id}`, payload);
         toast.success('Memory updated! ✏️');
       } else {
-        await api.post('/memories', payload);
+        await api.post('/api/memories', payload);
         toast.success('Memory saved! 🌟');
       }
 

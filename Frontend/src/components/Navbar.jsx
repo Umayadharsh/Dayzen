@@ -45,7 +45,7 @@ export default function Navbar() {
   const handleExport = async () => {
     setExporting(true);
     try {
-      const { data } = await api.get('/memories?limit=500');
+      const { data } = await api.get('/api/memories?limit=500');
       const pdf = new jsPDF();
       const pageW = pdf.internal.pageSize.getWidth();
       let y = 20;

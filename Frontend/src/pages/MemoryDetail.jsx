@@ -32,7 +32,7 @@ export default function MemoryDetail() {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const { data } = await api.get(`/memories/${id}`);
+        const { data } = await api.get(`/api/memories/${id}`);
         setMemory(data.memory);
       } catch {
         toast.error('Memory not found');
@@ -45,7 +45,7 @@ export default function MemoryDetail() {
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete this memory?')) return;
     try {
-      await api.delete(`/memories/${id}`);
+      await api.delete(`/api/memories/${id}`);
       toast.success('Memory deleted');
       navigate('/');
     } catch {
@@ -54,7 +54,7 @@ export default function MemoryDetail() {
   };
 
   const handleToggleFav = async () => {
-    const { data } = await api.patch(`/memories/${id}/favorite`);
+    const { data } = await api.patch(`/api/memories/${id}/favorite`);
     setMemory(data.memory);
   };
 
@@ -213,7 +213,7 @@ export default function MemoryDetail() {
           memory={memory}
           onClose={() => setEditOpen(false)}
           onSaved={async () => {
-            const { data } = await api.get(`/memories/${id}`);
+            const { data } = await api.get(`/api/memories/${id}`);
             setMemory(data.memory);
           }}
         />

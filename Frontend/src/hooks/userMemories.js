@@ -39,7 +39,7 @@ export default function useMemories() {
       params.page = filters.page;
       params.limit = filters.limit;
 
-      const { data } = await api.get('/memories', { params });
+      const { data } = await api.get('/api/memories', { params });
 
       setMemories(data.memories || []);
       setTotal(data.total || 0);
@@ -60,7 +60,7 @@ export default function useMemories() {
   // ── CREATE ────────────────────────────────────────
   const createMemory = useCallback(async (formData) => {
     try {
-      const { data } = await api.post('/memories', formData);
+      const { data } = await api.post('/api/memories', formData);
 
       setMemories(prev => [data.memory, ...prev]);
       setTotal(prev => prev + 1);
@@ -89,7 +89,7 @@ export default function useMemories() {
     );
 
     try {
-      await api.patch(`/memories/${strId}/favorite`);
+      await api.patch(`/api/memories/${strId}/favorite`);
     } catch (err) {
       console.error(err);
       toast.error('Failed to update favorite');
@@ -109,7 +109,7 @@ export default function useMemories() {
     setTotal(prev => prev - 1);
 
     try {
-      await api.delete(`/memories/${strId}`);
+      await api.delete(`/api/memories/${strId}`);
       toast.success('Memory deleted');
     } catch {
       toast.error('Delete failed — restoring');
