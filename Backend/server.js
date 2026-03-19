@@ -1,5 +1,5 @@
 const express = require('express');
-const cors = require('cors');
+
 const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
@@ -15,14 +15,27 @@ connectDB();
 
 // Security middleware
 app.use(helmet());
+
+
+
+const cors = require('cors');
+
+const allowedOrigin = (process.env.CLIENT_URL || '').trim();
+
 app.use(cors({
-  origin: process.env.CLIENT_URL,
+  origin: (origin, callback) => {
+    // allow requests with no origin (like Postman)
+    if (!origin) return callback(null, true);
+
+    if (origin === allowedOrigin) {
+      return callback(null, true);
+    } else {
+      console.log("Blocked by CORS:", origin);
+      return callback(null, false);
+    }
+  },
   credentials: true
 }));
-
-app.get('/', (req, res) => {
-  res.send('Dayzen API is running 🚀');
-});
 
 // Rate limiting
 const limiter = rateLimit({
