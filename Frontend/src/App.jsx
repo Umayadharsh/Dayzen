@@ -2,9 +2,11 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import { lazy, Suspense } from 'react';
+
+const Home = lazy(() => import('./pages/Home'));
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
 import MemoryDetail from './pages/MemoryDetail.jsx';
 
 const PrivateRoute = ({ children }) => {
@@ -22,6 +24,7 @@ export default function App() {
         <AuthProvider>
           <Toaster position="top-right"
             toastOptions={{ style: { fontFamily: 'DM Sans' } }} />
+            <Suspense fallback={<div>Loading...</div>}>
           <Routes>
             <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
             <Route path="/login" element={<Login />} />
@@ -36,6 +39,7 @@ export default function App() {
   }
 />
           </Routes>
+          </Suspense>
         </AuthProvider>
       </ThemeProvider>
     </BrowserRouter>

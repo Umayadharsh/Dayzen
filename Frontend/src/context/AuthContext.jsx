@@ -9,10 +9,14 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('dayzen_token');
-    if (token) fetchMe();
-    else setLoading(false);
-  }, []);
+  const token = localStorage.getItem('dayzen_token');
+  if (!token) {
+    setLoading(false);
+    return;
+  }
+
+  fetchMe();
+}, []);
 
   const fetchMe = async () => {
     try {
